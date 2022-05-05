@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+
+  <body>
+
+<h1>Successfully authenticated</h1>
+<p>
+  You have been assigned a new token for authentication. 
+  This token will expire in a minute(or as set by your SuperTokens core server configs)<!--TODO: Get the expiry time and update this acoordingly--> and needs to be refreshed. This is done automatically.
+  <br/><br/>To test how token expiration is handled, <b id="refreshTimer" style="color:red;"></b>
+</p>
+
+<br/></br/><button onclick="window.location.replace('/user/profile')">Update Profile</button>
+<br/><br/>
+<button onclick="logout()">Logout</button>
+
+</body>
+<%- include('../../partials/footer.ejs') %>
+<script>
+  let countdown = 60;
+  let refreshTimerElement = document.getElementById("refreshTimer");
+  let intervalId = setInterval(function(){
+    if(countdown<1){
+      refreshTimerElement.textContent = "refresh this page now";  
+      return clearInterval(intervalId);
+    }
+    countdown--;
+    refreshTimerElement.textContent = "refresh this page after "+ countdown + " seconds"; 
+  }, 1000)
+</script>
+</html>

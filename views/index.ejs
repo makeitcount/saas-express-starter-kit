@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+
+  <body>
+    <h1>Web SaaS Starter Kit - Node.js, Express</h1>
+    
+    <h3>Boilerplate for a web app with common features that every SaaS(Software as a Service) needs</h3>
+    <br/><br/>Every time, I wanted to build a new web app, I used to code everything from scratch. Login, signup, session management, email notifications, and whatnot. Eventually, when I had found the right tools and code for everything, I kept that as a starter template for myself so I wouldn't need to solve the challenges that I had already solved. 
+    <br/><br/>Am I the only person who needs these features for a new project? Or does everyone needs the same features in their web-based SaaS tool? Why not open-source this and let everyone bootstrap their projects with this template!
+    <br/><br/>I hope, this saves some time and helps you invest your time and energy in making system design and programming decisions that are unique to your SaaS web app. Start a project a little ahead of the starting line, where some common features are already implemented and well tested.
+
+    <br/>
+    <h2>Features</h2>
+    
+    <ul>
+      <li>Signup and signin | <a href="/auth">Demo</a></li>
+      <li>Session management | <a href="/user/dashboard">Demo</a></li>
+      <li>Reset password | WIP</li>
+      <li>Email notifications | WIP</li>
+      <li>Feature flagging | WIP</li>
+      <li>Single file to configure features(e.g. API keys, settings)</li>
+    </ul>
+
+    <br/>
+    <b>Made to last long</b>
+    <p>For most of these features, I have used other stable and well-maintained open-source projects. So you don't need to rely on me to keep this starter kit up-to-date(well, except updating once in a while, which I can certainly find time for).
+    </p>
+
+    <br/>
+    <h2>Get started</h2>
+    <ol>
+    <li>Clone <a href="<%= process.env.REPO_URL %>">this repo</a></li>
+    <li><code>npm install</code></li>
+    <li>Update the config for development (<code>config/development.env</code>)</li>
+    <li>Make your changes to the code</li>
+    <li><code>npm start</code></li>
+    </ol>
+
+    <br/>
+    <h3>Configuration</h3>
+    <h4>Update them at <code>config/development.js</code> or <code>config/production.js</code></h4>
+    <ul>
+      <% for(let conf in configs){ %>
+          <li><%= conf %></li>
+      <% } %>
+    </ul>
+
+    <br/>
+    <h3>Folder structure</h3>
+    <ul>
+    <li> <code>app.js</code> at the root is the main file that spawns express server</li>
+    <li> <code>views</code> contains all the frontend html code. We use <code>ejs</code> here as templating langugage.</li>
+    <li> <code>public</code> contains all the frontend side assets including styles and javascript code</li>
+    <li> <code>routes</code> contains all the business logic for different routes</li>
+    <li> <code>config</code> contains the configurations. Change them for your usage. </li>
+    </ul>
+
+    <br/>
+    <h2>Checklist for production deployment</h2>
+    1. Update the config for production (<code>config/production.env</code>)<br/>
+    2. Make sure to run the server with <code>NODE_ENV=production (e.g. node app.js --prod)</code>
+
+    <br/><br/><br/><br/><br/>
+    <footer style="text-align: center;">
+        Made with awesome open-source projects 👉 express, cors, morgan, <a href="">and more</a>
+    </footer>
+  </body>
+</html>

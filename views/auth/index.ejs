@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+
+  <body>
+
+    <h1>Sign In</h1>
+    <form id="signin-form" onsubmit="signin(); return false;">
+      <span id="signin-error" style="color:red;"></span>
+      <br/>
+      <label>Email</label><br/>
+      <input name="email" type="text" placeholder="Your Email" required><br />
+      <br/>
+      <label>Password</label><br/>
+      <input name="password" type="password" minlength="8" placeholder="Password" required><br />
+      <br/>
+      <input type="submit" value="Sign In" />
+    </form>
+
+    <br /><br />
+    <h1>Create New Account</h1>
+    <form id="signup-form" onsubmit="signup(); return false;">
+      <span id="signup-error" style="color:red;"></span>
+      <span id="signup-success" style="color: green;"></span>
+      <br/>
+      <label>Email</label><br/>
+      <input name="email" type="email" placeholder="Your Email" required><br />
+      <br/>
+      <label>Name</label><br/>
+      <input name="name" type="text" placeholder="Your Full Name" required><br />
+      <br/>
+      <label>Password</label><br/>
+      <input name="password" type="password" minlength="8" placeholder="Password" required><br />
+      <br/>
+      <input type="submit" value="Sign Up" />
+    </form>
+
+  </body>
+
+  <%- include('../partials/footer.ejs') %>
+  <script>
+    async function signup() {
+      var inputs = document.getElementById("signup-form").elements;
+      if (!inputs || inputs.length < 1) {
+        alert(
+          "Issues with sign up form. Make sure that it has the necessary input fields."
+        );
+        return false;
+      }
+      let formFields = [];
+      for (let i = 0; i < inputs.length; i++) {
+        let formInputElement = inputs[i];
+        if (!formInputElement || !formInputElement.name) continue;
+        formFields.push({
+          id: formInputElement.name,
+          value: formInputElement.value
+        });
+      }
+      if (!formFields || formFields.length < 1) {
+        alert("Necessary input fields are missing");
+        return false;
+      }
+      const response = await fetch(
+        "<%= process.env.SITE_DOMAIN_URL %>/api/signup",
+        {
+          method: "POST",
+          headers: {
+            rid: "emailpassword",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ formFields: formFields })
+        });
+      let result = await response.json();
+      console.log(result);
+      if(result.status==="OK"){
+        // alert(JSON.stringify(result.user));
+        window.location.replace("/user/profile");
+      } else {
+        if(result.status){
+          document.getElementById('signup-error').textContent = result.status;
+        } else {
+          document.getElementById('signup-error').textContent = "Some error occurred";
+        } 
+      }
+    }
+
+    async function signin() {
+      var inputs = document.getElementById("signin-form").elements;
+      if (!inputs || inputs.length < 1) {
+        alert(
+          "Issues with sign up form. Make sure that it has the necessary input fields."
+        );
+        return false;
+      }
+      let formFields = [];
+      for (let i = 0; i < inputs.length; i++) {
+        let formInputElement = inputs[i];
+        if (!formInputElement || !formInputElement.name) continue;
+        formFields.push({
+          id: formInputElement.name,
+          value: formInputElement.value
+        });
+      }
+      if (!formFields || formFields.length < 1) {
+        alert("Necessary input fields are missing");
+        return false;
+      }
+      const response = await fetch(
+        "<%= process.env.SITE_DOMAIN_URL %>/api/signin",
+        {
+          method: "POST",
+          headers: {
+            rid: "emailpassword",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ formFields: formFields })
+        }
+      );
+      let result = await response.json();
+      console.log(result);
+      if(result.status==="OK"){
+        // alert(JSON.stringify(result.user));
+        window.location.replace('/user/dashboard');
+      } else {
+        if(result.status){
+          document.getElementById('signin-error').textContent = result.status;
+        } else {
+          document.getElementById('signin-error').textContent = "Some error occurred";
+        }
+      }
+    }
+  </script>
+</html>

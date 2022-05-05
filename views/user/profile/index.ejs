@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+
+  <body>
+
+    <div id="loggedInInfo">Logged in as <span id="username"></span><button onclick="logout()">Logout</button></div>
+    <h1>User Profile</h1>
+    <form id="profile-form" onsubmit="updateProfile(); return false;">
+      <span id="profile-form-error" style="color:red;"></span>
+      <span id="profile-form-success" style="color:green;"></span>
+      <br/>
+      <label>Email<sup>*</sup></label><br/>
+      <input name="email" type="text" placeholder="Your Email" required><br />
+      <br/>
+      <label>Name</label><br/>
+      <input name="name" type="text" placeholder="Your Full Name"><br />
+      <br/>
+      <label>Phone</label><br/>
+      <input name="phone" type="phone" placeholder="Your Phone No."><br />
+      <br/>
+      <label>Current City</label><br/>
+      <input name="currentCity" type="text" placeholder="Your Current City"><br />
+      <br/>
+      <input type="submit" value="Update Profile" />
+    </form>
+  </body>
+  <%- include('../../partials/footer.ejs') %>
+</html>
