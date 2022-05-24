@@ -10,12 +10,12 @@ I hope, this saves some time and helps you invest your time and energy in making
 
 ## Features
 
-- Signup and signin | Done
-- Session management | Done
-- Reset password | WIP
-- Email notifications | WIP
-- Feature flagging | WIP
-- Single file to configure features(e.g. API keys, settings)| Done
+- [x] Signup and signin
+- [x] Session management | Done
+- [] Reset password | WIP
+- [] Email notifications | WIP
+- [] Feature flagging | WIP
+- [] Single file to configure features(e.g. API keys, settings)| Done
 
 **Made to last long**
 
@@ -52,3 +52,5 @@ For most of these features, I have used other stable and well-maintained open-so
 2. Make sure to run the server with NODE_ENV=production (e.g. node app.js --prod)
 
 Made with awesome open-source projects 👉 express, cors, morgan, supertokens and more
+
+## License - MIT
