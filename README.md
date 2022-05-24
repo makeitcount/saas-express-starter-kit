@@ -11,11 +11,11 @@ I hope, this saves some time and helps you invest your time and energy in making
 ## Features
 
 - [x] Signup and signin
-- [x] Session management | Done
-- [ ] Reset password | WIP
-- [ ] Email notifications | WIP
-- [ ] Feature flagging | WIP
-- [ ] Single file to configure features(e.g. API keys, settings)| Done
+- [x] Session management
+- [ ] Reset password
+- [ ] Email notifications
+- [ ] Feature flagging
+- [x] Single file to configure features(e.g. API keys, settings)
 
 **Made to last long**
 
