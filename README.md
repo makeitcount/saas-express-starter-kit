@@ -12,10 +12,10 @@ I hope, this saves some time and helps you invest your time and energy in making
 
 - [x] Signup and signin
 - [x] Session management | Done
-- [] Reset password | WIP
-- [] Email notifications | WIP
-- [] Feature flagging | WIP
-- [] Single file to configure features(e.g. API keys, settings)| Done
+- [ ] Reset password | WIP
+- [ ] Email notifications | WIP
+- [ ] Feature flagging | WIP
+- [ ] Single file to configure features(e.g. API keys, settings)| Done
 
 **Made to last long**
 
