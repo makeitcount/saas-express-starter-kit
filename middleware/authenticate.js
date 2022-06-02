@@ -15,7 +15,6 @@ function getSessionInfo(options) {
       console.log(
         "Has valid session. Check req.session in your route handlers for more info"
       );
-      next();
     } catch (err) {
       if (err.type === Session.Error.TRY_REFRESH_TOKEN) {
         // in this case, the session is still valid, only the access token has expired.
@@ -34,7 +33,7 @@ function getSessionInfo(options) {
             console.log("Token expired");
             // await Session.refreshSession(req, res);
             // next();
-            res.redirect(
+            return res.redirect(
               "/auth" +
                 "?redirectToPath=" +
                 req.originalUrl +
