@@ -6,14 +6,14 @@
 
   <body>
 
-<h1>Successfully authenticated</h1>
+<h1><%= user && user.name ? user.name+',' : '' %> you're successfully authenticated</h1>
 <p>
   You have been assigned a new token for authentication. 
   This token will expire in a minute(or as set by your SuperTokens core server configs)<!--TODO: Get the expiry time and update this acoordingly--> and needs to be refreshed. This is done automatically.
   <br/><br/>To test how token expiration is handled, <b id="refreshTimer" style="color:red;"></b>
 </p>
 
-<br/></br/><button onclick="window.location.replace('/user/profile')">Update Profile</button>
+<br/></br/><a href="/user/profile">Update Profile</a>
 <br/><br/>
 <button onclick="logout()">Logout</button>
 
@@ -28,7 +28,7 @@
       return clearInterval(intervalId);
     }
     countdown--;
-    refreshTimerElement.textContent = "refresh this page after "+ countdown + " seconds"; 
+    refreshTimerElement.textContent = "refresh this page after approx. "+ countdown + " seconds"; 
   }, 1000)
 </script>
 </html>

@@ -15,6 +15,8 @@ function getSessionInfo(options) {
       console.log(
         "Has valid session. Check req.session in your route handlers for more info"
       );
+      let userInfoInToken = req.session.getAccessTokenPayload();
+      req.user = userInfoInToken;
     } catch (err) {
       if (err.type === Session.Error.TRY_REFRESH_TOKEN) {
         // in this case, the session is still valid, only the access token has expired.

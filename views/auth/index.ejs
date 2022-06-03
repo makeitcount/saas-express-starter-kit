@@ -11,10 +11,10 @@
       <span id="signin-error" style="color:red;"></span>
       <br/>
       <label>Email</label><br/>
-      <input name="email" type="text" placeholder="Your Email" required><br />
+      <input name="email" type="text" placeholder="Your Email" autocomplete="email" required><br />
       <br/>
       <label>Password</label><br/>
-      <input name="password" type="password" minlength="8" placeholder="Password" required><br />
+      <input name="password" type="password" minlength="8" placeholder="Password" autocomplete="current-password" required><br />
       <br/>
       <input type="submit" value="Sign In" />
     </form>
@@ -26,13 +26,13 @@
       <span id="signup-success" style="color: green;"></span>
       <br/>
       <label>Email</label><br/>
-      <input name="email" type="email" placeholder="Your Email" required><br />
+      <input name="email" type="email" placeholder="Your Email" autocomplete="email" required><br />
       <br/>
       <label>Name</label><br/>
-      <input name="name" type="text" placeholder="Your Full Name" required><br />
+      <input name="name" type="text" placeholder="Your Full Name" autocomplete="name" required><br />
       <br/>
       <label>Password</label><br/>
-      <input name="password" type="password" minlength="8" placeholder="Password" required><br />
+      <input name="password" type="password" minlength="8" placeholder="Password" autocomplete="current-password" required><br />
       <br/>
       <input type="submit" value="Sign Up" />
     </form>
@@ -62,6 +62,7 @@
         alert("Necessary input fields are missing");
         return false;
       }
+      Loader.show("Registering your account...");
       const response = await fetch(
         "<%= process.env.SITE_DOMAIN_URL %>/api/signup",
         {
@@ -74,6 +75,7 @@
         });
       let result = await response.json();
       console.log(result);
+      Loader.hide();
       if(result.status==="OK"){
         // alert(JSON.stringify(result.user));
         window.location.replace("/user/profile");
@@ -87,6 +89,7 @@
     }
 
     async function signin() {
+      console.debug("Signing in...")
       var inputs = document.getElementById("signin-form").elements;
       if (!inputs || inputs.length < 1) {
         alert(
@@ -107,6 +110,7 @@
         alert("Necessary input fields are missing");
         return false;
       }
+      Loader.show("Signing in...");
       const response = await fetch(
         "<%= process.env.SITE_DOMAIN_URL %>/api/signin",
         {
@@ -120,6 +124,7 @@
       );
       let result = await response.json();
       console.log(result);
+      Loader.hide();
       if(result.status==="OK"){
         // alert(JSON.stringify(result.user));
         window.location.replace('/user/dashboard');
