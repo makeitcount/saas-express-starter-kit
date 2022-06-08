@@ -24,9 +24,9 @@ var {
   errorHandler
 } = require("supertokens-node/framework/express");
 
-var authService = require("./services/authService.js");
+var AuthService = require("./services/AuthService.js");
 
-authService.init()
+AuthService.init()
 
 var indexRouter = require("./routes/index");
 var userRouter = require("./routes/user");
@@ -58,6 +58,14 @@ app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use(errorHandler());
 
-var listener = app.listen(8080, function () {
+var listener = app.listen(8080, async function () {
+  var EmailService = require("./services/EmailService.js");
+  await EmailService.init();
+  EmailService.sendEmail(
+    config.SITE_TITLE + " is up now", 
+    { 
+    to: config.ADMIN_EMAIL, 
+    subject: config.SITE_TITLE + " is up now. Sending this email as you as you're the admin."
+  })
   console.log("Listening on port " + listener.address().port);
 });

@@ -5,7 +5,7 @@ const getSessionInfo = require("../middleware/authenticate").getSessionInfo;
 
 var router = express.Router();
 
-var authService = require("../services/authService.js");
+var AuthService = require("../services/AuthService.js");
 
 /* GET users profile */
 router.get("/profile", getSessionInfo({ sessionRequired: true }), async function (req, res) {
@@ -25,9 +25,9 @@ router.post("/profile", getSessionInfo({ sessionRequired: true }), async functio
   // Remove fields that are not part of UserMetaData
   delete newProfileData["email"];
   // Update the stored user metadata
-  await authService.updateUserMetaData(req.session.userId, newProfileData);
+  await AuthService.updateUserMetaData(req.session.userId, newProfileData);
   // Use the new user metadata in the access token
-  req.user = await authService.storeUserMetaDataInTokenPayload(req.session, req.user);
+  req.user = await AuthService.storeUserMetaDataInTokenPayload(req.session, req.user);
   res.render("user/profile", { user: req.user, title: process.env.SITE_TITLE });
 });
 
