@@ -21,11 +21,11 @@
       <label>Phone</label><br/>
       <input name="phone" type="phone" placeholder="Your Phone No." value="<%= user && user.phone ? user.phone : '' %>"><br />
       <br/>
-      <label>Current City</label><br/>
-      <input name="city" type="text" placeholder="Your Current City" value="<%= user && user.city ? user.city : '' %>"><br />
+      <label>City</label><br/>
+      <input name="city" type="text" placeholder="Your City" value="<%= user && user.city ? user.city : '' %>"><br />
       <br/>
       <label>Timezone</label><br/>
-      <input name="timezone" type="text" placeholder="Your Timezone" value="<%= user && user.timezone ? user.timezone : '' %>"><br />
+      <input name="timezone" type="text" placeholder="Your Timezone e.g. Asia/Kolkata" value="<%= user && user.timezone ? user.timezone : '' %>"><br />
       <br/>
       <input type="submit" value="Update Profile" />
     </form>
