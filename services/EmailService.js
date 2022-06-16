@@ -4,14 +4,6 @@ exports.sendEmail = sendEmail;
 
 const nodemailer = require("nodemailer");
 
-var envImportResult = require("dotenv").config({
-    path: "./config/" + (process.env.NODE_ENV || "production") + ".env"
-  });
-  if (envImportResult.error) {
-    throw envImportResult.error;
-  }
-const configs = envImportResult.parsed;
-
 var EmailTransporter;
 
 /**
@@ -65,8 +57,8 @@ init().catch(console.error);
 async function sendEmail(message, options){
     let info = await EmailTransporter.sendMail({
         to: options.to,
-        from: options.from || configs.DEFAULT_FROM_EMAIL,
-        subject: options.subject || ("Update from "+configs.SITE_TITLE),
+        from: options.from || process.env.DEFAULT_FROM_EMAIL,
+        subject: options.subject || ("Update from "+process.env.SITE_TITLE),
         text: message
     })
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
