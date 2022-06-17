@@ -12,6 +12,7 @@ var envImportResult = require("dotenv").config({
 if (envImportResult.error) {
   throw envImportResult.error;
 }
+
 const config = envImportResult.parsed;
 console.log("Configuration values, as found in " + configFilePath);
 console.log(config);
@@ -62,10 +63,10 @@ var listener = app.listen(8080, async function () {
   var EmailService = require("./services/EmailService.js");
   await EmailService.init();
   EmailService.sendEmail(
-    config.SITE_TITLE + " is up now", 
+    process.env.SITE_TITLE + " is up now", 
     { 
-    to: config.ADMIN_EMAIL, 
-    subject: config.SITE_TITLE + " is up now. Sending this email as you as you're the admin."
+    to: process.env.ADMIN_EMAIL, 
+    subject: process.env.SITE_TITLE + " is up now. Sending this email as you as you're the admin."
   })
   console.log("Listening on port " + listener.address().port);
 });

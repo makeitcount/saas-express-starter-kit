@@ -6,7 +6,7 @@
 
   <body>
 
-<h1><%= user && user.name ? user.name+',' : '' %> you're successfully authenticated</h1>
+<h1><%= user && user.name ? (user.name +',') : '' %> you're successfully authenticated</h1>
 <p>
   You have been assigned a new token for authentication. 
   This token will expire in a minute(or as set by your SuperTokens core server configs)<!--TODO: Get the expiry time and update this acoordingly--> and needs to be refreshed. This is done automatically.
