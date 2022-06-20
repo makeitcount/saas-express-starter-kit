@@ -2,9 +2,24 @@
 exports.init = init;
 exports.sendEmail = sendEmail;
 
+// Library to send email
 const nodemailer = require("nodemailer");
+// Library to create templates
+var consolidate = require('consolidate');
+const TEMPLATE_LANGUAGE = "ejs";
+const DEFAULT_CONTEXT_DATA_OBJECT = { websiteLink: process.env.SITE_DOMAIN_URL };
+// Library to convert html email to plain-text email
+var htmlToText = require('nodemailer-html-to-text').htmlToText;
 
 var EmailTransporter;
+
+const EMAIL_TEMPLATES = {
+  "admin.alert": "views/email-templates/admin/alert/html.ejs",
+  "user.alert": "views/email-templates/user/alert/html.ejs",
+  "admin.useractivity.feedback": "views/email-templates/admin/useractivity/feedback/html.ejs",
+  "admin.request.accountdeletion": "views/email-templates/admin/request/accountdeletion/html.ejs",
+  "user.activity": "views/email-templates/user/activity/html.ejs"
+}
 
 /**
  * Initializes email service, sends a test email to a test email(on ethereal)
@@ -28,6 +43,8 @@ async function init() {
       pass: testAccount.pass, // generated ethereal password
     },
   });
+  // Convert html to plain text if plain-text content not provided
+  EmailTransporter.use('compile', htmlToText())
 
   // send test mail with defined transport object
   let info = await EmailTransporter.sendMail({
@@ -50,16 +67,48 @@ init().catch(console.error);
 
 
 /**
- * Function to send 
- * @param {*} message 
- * @param {*} options 
+ * Function to send emails
+ * @param {String} category email category e.g. `admin.request.accountdeletion`. this helps in getting the right template and logic.
+ * @param {Object} contextData data required to fill the template
+ * @param {Object} emailOptions { to, from, subject, text }
+ * @example sendEmail()
  */
-async function sendEmail(message, options){
-    let info = await EmailTransporter.sendMail({
-        to: options.to,
-        from: options.from || process.env.DEFAULT_FROM_EMAIL,
-        subject: options.subject || ("Update from "+process.env.SITE_TITLE),
-        text: message
-    })
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+async function sendEmail(category, contextData, emailOptions){
+  let finalEmailOptions = emailOptions || {};
+  if(!finalEmailOptions.to){
+    console.warn("No email address to send email. Make sure to provide it in options.to param");
+  }
+  if(!finalEmailOptions.from){
+    finalEmailOptions.from = process.env.DEFAULT_FROM_EMAIL;
+  }
+  if(!finalEmailOptions.subject){
+    finalEmailOptions.subject = "Update from "+process.env.SITE_TITLE;
+  }
+  // Create html email if not already provided
+  if(!emailOptions.html && category && EMAIL_TEMPLATES[category]){
+    // Compile html email from the template using consolidate library
+  let finalEmailOptions = emailOptions || {};
+    finalEmailOptions.html = await consolidate[TEMPLATE_LANGUAGE](EMAIL_TEMPLATES[category], Object.assign(DEFAULT_CONTEXT_DATA_OBJECT, contextData));
+  }
+  if(!finalEmailOptions.html && !finalEmailOptions.text){
+    console.warn("No message to send email. Make sure to add message param under options.text or options.html");
+  }
+  let info = await EmailTransporter.sendMail(finalEmailOptions)
+  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+}
+
+/**
+ * A simple fn to send alert emails to admin. A quick to use sendEmail wrapper.
+ * @param {*} message 
+ */
+async function sendAdminAlert(message){
+
+}
+
+/**
+ * A simple fn to send alert emails to user. A quick to use sendEmail wrapper.
+ * @param {*} message 
+ */
+async function sendUserAlert(email, message){
+
 }
