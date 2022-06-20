@@ -1,6 +1,6 @@
 {
   "name": "web-saas-starter-kit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An Express-based application skeleton for SaaS projects on the web",
   "main": "app.js",
   "scripts": {
