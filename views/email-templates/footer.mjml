@@ -5,3 +5,13 @@
         <mj-text align="center"><%= websiteTitle %></mj-text>
     </mj-column>
 </mj-section>
+
+<mj-section>
+    <mj-column>
+        <mj-social>
+        <mj-social-element name="youtube-noshare" href="<%= socialYoutubeUrl !== undefined ? socialYoutubeUrl : '#' %>" />
+        <mj-social-element name="twitter-noshare" href="<%= socialTwitterUrl !== undefined ? socialTwitterUrl : '#' %>" />
+        <mj-social-element name="linkedin-noshare" href="<%= socialLinkedinUrl !== undefined ? socialLinkedinUrl : '#' %>" />
+        </mj-social>
+    </mj-column>
+</mj-section>

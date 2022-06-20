@@ -26,6 +26,7 @@ For most of these features, I have used other stable and well-maintained open-so
 - Clone this repo
 - npm install
 - Update the config for development (`config/development.env`)
+- For email templates, we use [MJML](https://documentation.mjml.io/). To update them, update the `views/email-templates/**/html.mjml` file and export it to `html.ejs` in the same folder. For which you can either use editor plugins such as [vscode-mjml](https://documentation.mjml.io/) or [mjml](https://github.com/mjmlio/mjml) javascript library
 - Make your changes to the code
 - `npm start`
 

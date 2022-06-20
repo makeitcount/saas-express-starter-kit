@@ -2,6 +2,7 @@
 exports.init = init;
 exports.sendEmail = sendEmail;
 exports.alertAdmin = alertAdmin;
+exports.alertUser = alertUser;
 
 // Library to send email
 const nodemailer = require("nodemailer");
@@ -12,6 +13,9 @@ const DEFAULT_CONTEXT_DATA_OBJECT = {
   websiteUrl: process.env.SITE_DOMAIN_URL,
   websiteTitle: process.env.SITE_TITLE,
   brandColorPrimary: process.env.BRAND_COLOR_PRIMARY,
+  socialYoutubeUrl: process.env.SOCIAL_YOUTUBE_URL,
+  socialTwitterUrl: process.env.SOCIAL_TWITTER_URL,
+  socialLinkedinUrl: process.env.SOCIAL_LINKEDIN_URL,
   message: "" 
 };
 // Library to convert html email to plain-text email
@@ -120,7 +124,11 @@ async function alertAdmin(message){
  * @param {*} message 
  */
 async function alertUser(email, message){
-
+  await sendEmail('user.alert', { message: message }, {
+    text: message,
+    subject: extractSubjectFromMessage(message),
+    to: email
+  });
 }
 
 /**
