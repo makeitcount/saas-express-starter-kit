@@ -1,13 +1,23 @@
 "use strict";
 exports.init = init;
 exports.sendEmail = sendEmail;
+exports.alertAdmin = alertAdmin;
+exports.alertUser = alertUser;
 
 // Library to send email
 const nodemailer = require("nodemailer");
 // Library to create templates
 var consolidate = require('consolidate');
 const TEMPLATE_LANGUAGE = "ejs";
-const DEFAULT_CONTEXT_DATA_OBJECT = { websiteLink: process.env.SITE_DOMAIN_URL };
+const DEFAULT_CONTEXT_DATA_OBJECT = { 
+  websiteUrl: process.env.SITE_DOMAIN_URL,
+  websiteTitle: process.env.SITE_TITLE,
+  brandColorPrimary: process.env.BRAND_COLOR_PRIMARY,
+  socialYoutubeUrl: process.env.SOCIAL_YOUTUBE_URL,
+  socialTwitterUrl: process.env.SOCIAL_TWITTER_URL,
+  socialLinkedinUrl: process.env.SOCIAL_LINKEDIN_URL,
+  message: "" 
+};
 // Library to convert html email to plain-text email
 var htmlToText = require('nodemailer-html-to-text').htmlToText;
 
@@ -101,14 +111,34 @@ async function sendEmail(category, contextData, emailOptions){
  * A simple fn to send alert emails to admin. A quick to use sendEmail wrapper.
  * @param {*} message 
  */
-async function sendAdminAlert(message){
-
+async function alertAdmin(message){
+  await sendEmail('admin.alert', { message: message }, {
+    text: message,
+    subject: extractSubjectFromMessage(message),
+    to: process.env.ADMIN_EMAIL
+  });
 }
 
 /**
  * A simple fn to send alert emails to user. A quick to use sendEmail wrapper.
  * @param {*} message 
  */
-async function sendUserAlert(email, message){
+async function alertUser(email, message){
+  await sendEmail('user.alert', { message: message }, {
+    text: message,
+    subject: extractSubjectFromMessage(message),
+    to: email
+  });
+}
 
+/**
+ * Creates subject from the message
+ */
+function extractSubjectFromMessage(message){
+  let maxLength = 50; // maximum number of chars to extract
+  // Trim the string to the maximum length
+  var subject = message.substr(0, maxLength);
+  // We don't want to cut the words from in between so re-trim if we are in the middle of a word
+  subject = subject.substr(0, Math.min(subject.length, subject.lastIndexOf(" ")))
+  return subject.length < maxLength ? ("⚠️ " + subject) : ("⚠️ " + subject + "...")
 }

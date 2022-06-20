@@ -12,8 +12,8 @@ I hope, this saves some time and helps you invest your time and energy in making
 
 - [x] Signup and signin
 - [x] Session management
+- [x] Email notifications
 - [ ] Reset password
-- [ ] Email notifications
 - [ ] Feature flagging
 - [x] Single file to configure features(e.g. API keys, settings)
 
@@ -26,6 +26,7 @@ For most of these features, I have used other stable and well-maintained open-so
 - Clone this repo
 - npm install
 - Update the config for development (`config/development.env`)
+- For email templates, we use [MJML](https://documentation.mjml.io/). To update them, update the `views/email-templates/**/html.mjml` file and export it to `html.ejs` in the same folder. For which you can either use editor plugins such as [vscode-mjml](https://documentation.mjml.io/) or [mjml](https://github.com/mjmlio/mjml) javascript library
 - Make your changes to the code
 - `npm start`
 
@@ -42,14 +43,16 @@ For most of these features, I have used other stable and well-maintained open-so
 
 - `app.js` at the root is the main file that spawns express server
 - `views` contains all the frontend html code. We use ejs here as templating langugage.
-- public contains all the frontend side assets including styles and javascript code
-- routes contains all the business logic for different routes
-- config contains the configurations. Change them for your usage.
+- `views/email-templates` contains all the email templates written in `mjml` and then exported to `ejs`
+- `services` contains all code that can be separated as an independent service. Controller and other services use thes services.
+- `public` contains all the frontend side assets including styles and javascript code
+- `routes` contains all the business logic for different routes
+- `config` contains the configurations. Change them for your usage.
 
 **Checklist for production deployment**
 
-1. Update the config for production (config/production.env)
-2. Make sure to run the server with NODE_ENV=production (e.g. node app.js --prod)
+1. Update the config for production (`config/production.env`)
+2. Make sure to run the server with NODE_ENV=production (e.g. `node app.js --prod`)
 
 Made with awesome open-source projects 👉 express, cors, morgan, supertokens and more
 
