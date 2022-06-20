@@ -1,0 +1,7 @@
+<!--MJML is a markup language for responsive email design. Guide to MJML - https://documentation.mjml.io/-->
+<mj-section>
+    <mj-column>
+        <mj-image align="center" href="<%= websiteUrl %>" width="32px" height="32px" src="<%= websiteUrl %>/images/logo.png"></mj-image>
+        <mj-text align="center"><%= websiteTitle %></mj-text>
+    </mj-column>
+</mj-section>

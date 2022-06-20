@@ -1,0 +1,13 @@
+<!--MJML is a markup language for responsive email design. Guide to MJML - https://documentation.mjml.io/-->
+<mjml>
+    <mj-body>
+        <mj-section>
+            <mj-column>
+                <mj-text>
+                    <%= message !== undefined ? message : "Missing the message. The preferred way of sending admin alerts is via EmailServic.alertAdmin(message)"  %>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+        <mj-include path="../../footer.mjml" />
+    </mj-body>
+</mjml>

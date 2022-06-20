@@ -67,5 +67,7 @@ var listener = app.listen(8080, async function () {
     to: process.env.ADMIN_EMAIL, 
     subject: process.env.SITE_TITLE + " is up now. Sending this email as you as you're the admin."
   })
+  // You can send the same email to admin as above using following fn
+  EmailService.alertAdmin(process.env.SITE_TITLE + " is up now. Sending this email as you as you're the admin.");
   console.log("Listening on port " + listener.address().port);
 });
