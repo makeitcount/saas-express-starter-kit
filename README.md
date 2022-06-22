@@ -54,6 +54,6 @@ For most of these features, I have used other stable and well-maintained open-so
 1. Update the config for production (`config/production.env`)
 2. Make sure to run the server with NODE_ENV=production (e.g. `node app.js --prod`)
 
-Made with awesome open-source projects 👉 express, cors, morgan, supertokens and more
+Made with awesome open-source projects 👉 express, cors, morgan, nodemailer, mjml, supertokens and more
 
 ## License - MIT
