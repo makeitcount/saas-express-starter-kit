@@ -40,22 +40,28 @@
     </ol>
 
     <br/>
+
+    <br/>
+    <h3>Folder structure</h3>
+    <ul>
+    <li> <code>app.js</code> The main file that spawns the server</li>
+    <li> <code>routes</code> You may call it controller as well. The purpose of this code is to route requests to appropriate service after validation</li>
+    <li> <code>middleware</code> Different routes want to apply some common logic before the request is processed e.g. <i>is this a request from an authenticated user?</i>. 
+      This folder contains code for those commong things you want to do before the request is processed.
+      If you know express, you know this already. If not, check <code>routes/auth.js</code> to see how you can call a middleware on a route</li>
+    <li> <code>services</code> The purpose of this code is to make request to database or external APIs. Controllers(`routes`) and other services use the services available here</li>
+    <li> <code>views</code> Frontend html code. We use <code>ejs</code> here as the templating langugage</li>
+    <li> <code>views/email-templates</code> All the email templates written in <code>mjml</code> and then exported to <code>ejs</code></li>
+    <li> <code>public</code> Frontend side assets including styles and javascript code</li>
+    <li> <code>config</code> The configurations, you'll likely want to change to suit your project</li>
+    </ul>
+
     <h3>Configuration</h3>
     <h4>Update them at <code>config/development.js</code> or <code>config/production.js</code></h4>
     <ul>
       <% for(let conf in configs){ %>
           <li><%= conf %></li>
       <% } %>
-    </ul>
-
-    <br/>
-    <h3>Folder structure</h3>
-    <ul>
-    <li> <code>app.js</code> at the root is the main file that spawns express server</li>
-    <li> <code>views</code> contains all the frontend html code. We use <code>ejs</code> here as templating langugage.</li>
-    <li> <code>public</code> contains all the frontend side assets including styles and javascript code</li>
-    <li> <code>routes</code> contains all the business logic for different routes</li>
-    <li> <code>config</code> contains the configurations. Change them for your usage. </li>
     </ul>
 
     <br/>

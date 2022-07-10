@@ -30,6 +30,18 @@ For most of these features, I have used other stable and well-maintained open-so
 - Make your changes to the code
 - `npm start`
 
+
+**Folder structure**
+
+- `app.js` - The main file that spawns the server
+- `routes` - You may call it controller as well. The purpose of this code is to route requests to appropriate service after validation
+- `middleware` - Different routes want to apply some common logic before the request is processed e.g. "is this a request from an authenticated user?". This folder contains code for those commong things you want to do before the request is processed.  If you know express, you know this already. If not, check `routes/auth.js` to see how you can call a middleware on a route.
+- `services` - The purpose of this code is to make request to database or external APIs. Controllers(`routes`) and other services use the services available here
+- `views` - Frontend html code. We use `ejs` here as the templating langugage
+- `views/email-templates` - All the email templates written in `mjml` and then exported to `ejs`
+- `public` - Frontend side assets including styles and javascript code
+- `config` - The configurations, you'll likely want to change to suit your project
+
 **Configuration**
 
 - Update them at config/development.js or config/production.js
@@ -38,16 +50,6 @@ For most of these features, I have used other stable and well-maintained open-so
 - REPO_URL
 - SUPERTOKENS_CORE_URI
 - SUPERTOKENS_CORE_API_KEY
-
-**Folder structure**
-
-- `app.js` at the root is the main file that spawns express server
-- `views` contains all the frontend html code. We use ejs here as templating langugage.
-- `views/email-templates` contains all the email templates written in `mjml` and then exported to `ejs`
-- `services` contains all code that can be separated as an independent service. Controller and other services use thes services.
-- `public` contains all the frontend side assets including styles and javascript code
-- `routes` contains all the business logic for different routes
-- `config` contains the configurations. Change them for your usage.
 
 **Checklist for production deployment**
 
