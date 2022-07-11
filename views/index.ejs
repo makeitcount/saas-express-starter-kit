@@ -39,15 +39,12 @@
     <li><code>npm start</code></li>
     </ol>
 
-    <br/>
-
-    <br/>
     <h3>Folder structure</h3>
     <ul>
     <li> <code>app.js</code> The main file that spawns the server</li>
     <li> <code>routes</code> You may call it controller as well. The purpose of this code is to route requests to appropriate service after validation</li>
     <li> <code>middleware</code> Different routes want to apply some common logic before the request is processed e.g. <i>is this a request from an authenticated user?</i>. 
-      This folder contains code for those commong things you want to do before the request is processed.
+      This folder contains code for those common things you want to do before the request is processed.
       If you know express, you know this already. If not, check <code>routes/auth.js</code> to see how you can call a middleware on a route</li>
     <li> <code>services</code> The purpose of this code is to make request to database or external APIs. Controllers(`routes`) and other services use the services available here</li>
     <li> <code>views</code> Frontend html code. We use <code>ejs</code> here as the templating langugage</li>
@@ -57,7 +54,7 @@
     </ul>
 
     <h3>Configuration</h3>
-    <h4>Update them at <code>config/development.js</code> or <code>config/production.js</code></h4>
+    Update them at <code>config/development.js</code> or <code>config/production.js</code>
     <ul>
       <% for(let conf in configs){ %>
           <li><%= conf %></li>
@@ -71,7 +68,7 @@
 
     <br/><br/><br/><br/><br/>
     <footer style="text-align: center;">
-        Made with awesome open-source projects 👉 express, cors, morgan, <a href="">and more</a>
+        Made with awesome open-source projects 👉 express, cors, morgan, nodemailer, mjml, supertokens, etc.
     </footer>
   </body>
 </html>

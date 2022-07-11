@@ -35,7 +35,7 @@ For most of these features, I have used other stable and well-maintained open-so
 
 - `app.js` - The main file that spawns the server
 - `routes` - You may call it controller as well. The purpose of this code is to route requests to appropriate service after validation
-- `middleware` - Different routes want to apply some common logic before the request is processed e.g. "is this a request from an authenticated user?". This folder contains code for those commong things you want to do before the request is processed.  If you know express, you know this already. If not, check `routes/auth.js` to see how you can call a middleware on a route.
+- `middleware` - Different routes want to apply some common logic before the request is processed e.g. "is this a request from an authenticated user?". This folder contains code for those common things you want to do before the request is processed.  If you know express, you know this already. If not, check `routes/auth.js` to see how you can call a middleware on a route.
 - `services` - The purpose of this code is to make request to database or external APIs. Controllers(`routes`) and other services use the services available here
 - `views` - Frontend html code. We use `ejs` here as the templating langugage
 - `views/email-templates` - All the email templates written in `mjml` and then exported to `ejs`
