@@ -19,4 +19,8 @@ router.get("/logout", async function (req, res) {
   res.redirect("/auth");
 });
 
+router.get("/reset-password", async function (req, res) {
+  res.render("auth/reset-password", { title: "Signup or signin |" + process.env.SITE_TITLE });
+});
+
 module.exports = router;

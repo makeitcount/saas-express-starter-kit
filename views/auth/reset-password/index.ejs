@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+
+  <body>
+    <h1>Create New Password</h1>
+    <form id="password-reset-form" onsubmit="resetPassword(); return false;">
+        <span id="reset-password-error" style="color:red;"></span>
+        <br/><br/>
+        <label>Password</label><br/>
+        <input name="password" type="password" minlength="8" placeholder="Enter New Password" autocomplete="new-password" required><br />
+        <br/>
+        <label>Password</label><br/>
+        <input id="repeated-password" type="password" minlength="8" placeholder="Enter New Password Again" autocomplete="new-password" required><br />
+        <br/>
+        <input type="submit" value="Submit" onclick="resetPassword()" />
+    </form>
+  </body>
+
+  <%- include('../../partials/footer.ejs') %>
+  <script>
+      async function resetPassword(){
+        let formFields = DOM.getFormFields("password-reset-form", { fields: ["password"] });
+        if(!formFields || formFields.length<1){
+          alert("Enter new password you want to set")
+          return null;
+        }
+        //   formFields.push({ id:"token", "value":supertokensEmailPassword.getResetPasswordTokenFromURL()})
+        DOM.loader().show("Sending password reset link...");
+        supertokensEmailPassword.submitNewPassword({formFields: formFields})
+          .then(function(result){
+            if(result.status){
+              if(result.status=="OK"){
+                document.getElementById('reset-password-error').textContent = "Password changed successfully."
+              } else if(result.status==="RESET_PASSWORD_INVALID_TOKEN_ERROR"){
+                document.getElementById('reset-password-error').textContent = "Invalid token."
+              } else if(result.status=="FIELD_ERROR"){
+                let errorMessage = "";
+                if(result.formFields){
+                  result.formFields.forEach(function(formField){
+                    // formField - {id: nameOfInput, error: errorTextForTheInput }
+                    errorMessage += formField.error+" "
+                  })
+                }
+                document.getElementById('reset-password-error').textContent = errorMessage || result.status;
+              }
+            } else {
+              document.getElementById('reset-password-error').textContent = "Some error occurred";
+            }
+          })
+          .finally(function(){
+            DOM.loader().hide();
+          })
+      }
+  </script>
+</html>

@@ -9,7 +9,7 @@
     <h1>Sign In</h1>
     <form id="signin-form" onsubmit="signin(); return false;">
       <span id="signin-error" style="color:red;"></span>
-      <br/>
+      <br/><br/>
       <label>Email</label><br/>
       <input name="email" type="text" placeholder="Your Email" autocomplete="email" required><br />
       <br/>
@@ -17,6 +17,8 @@
       <input name="password" type="password" minlength="8" placeholder="Password" autocomplete="current-password" required><br />
       <br/>
       <input type="submit" value="Sign In" />
+      <br/><br/>
+      <a href="#" onclick="sendPasswordResetToken()">Forgot password?</a>
     </form>
 
     <br /><br />
@@ -24,7 +26,7 @@
     <form id="signup-form" onsubmit="signup(); return false;">
       <span id="signup-error" style="color:red;"></span>
       <span id="signup-success" style="color: green;"></span>
-      <br/>
+      <br/><br/>
       <label>Email</label><br/>
       <input name="email" type="email" placeholder="Your Email" autocomplete="email" required><br />
       <br/>
@@ -41,28 +43,16 @@
 
   <%- include('../partials/footer.ejs') %>
   <script>
+    /**TODO : now that we have added supertokens-web-sdk and supertokens's emailpassword.js, 
+     * we can refactor following fn to use sdk api
+     **/
     async function signup() {
-      var inputs = document.getElementById("signup-form").elements;
-      if (!inputs || inputs.length < 1) {
-        alert(
-          "Issues with sign up form. Make sure that it has the necessary input fields."
-        );
-        return false;
-      }
-      let formFields = [];
-      for (let i = 0; i < inputs.length; i++) {
-        let formInputElement = inputs[i];
-        if (!formInputElement || !formInputElement.name) continue;
-        formFields.push({
-          id: formInputElement.name,
-          value: formInputElement.value
-        });
-      }
+      let formFields = DOM.getFormFields("signup-form");
       if (!formFields || formFields.length < 1) {
         alert("Necessary input fields are missing");
         return false;
       }
-      Loader.show("Registering your account...");
+      DOM.loader().show("Registering your account...");
       const response = await fetch(
         "<%= process.env.SITE_DOMAIN_URL %>/api/signup",
         {
@@ -75,13 +65,20 @@
         });
       let result = await response.json();
       console.log(result);
-      Loader.hide();
+      DOM.loader().hide();
       if(result.status==="OK"){
         // alert(JSON.stringify(result.user));
         window.location.replace("/user/profile");
       } else {
-        if(result.status){
-          document.getElementById('signup-error').textContent = result.status;
+        if(result.status && result.status=="FIELD_ERROR"){
+          let errorMessage = "";
+          if(result.formFields){
+            result.formFields.forEach(function(formField){
+              // formField - {id: nameOfInput, error: errorTextForTheInput }
+              errorMessage += formField.error+" "
+            })
+          }
+          document.getElementById('signup-error').textContent = errorMessage || result.status;
         } else {
           document.getElementById('signup-error').textContent = "Some error occurred";
         } 
@@ -90,27 +87,12 @@
 
     async function signin() {
       console.debug("Signing in...")
-      var inputs = document.getElementById("signin-form").elements;
-      if (!inputs || inputs.length < 1) {
-        alert(
-          "Issues with sign up form. Make sure that it has the necessary input fields."
-        );
-        return false;
-      }
-      let formFields = [];
-      for (let i = 0; i < inputs.length; i++) {
-        let formInputElement = inputs[i];
-        if (!formInputElement || !formInputElement.name) continue;
-        formFields.push({
-          id: formInputElement.name,
-          value: formInputElement.value
-        });
-      }
+      let formFields = DOM.getFormFields("signin-form");
       if (!formFields || formFields.length < 1) {
         alert("Necessary input fields are missing");
         return false;
       }
-      Loader.show("Signing in...");
+      DOM.loader().show("Signing in...");
       const response = await fetch(
         "<%= process.env.SITE_DOMAIN_URL %>/api/signin",
         {
@@ -124,17 +106,59 @@
       );
       let result = await response.json();
       console.log(result);
-      Loader.hide();
+      DOM.loader().hide();
       if(result.status==="OK"){
         // alert(JSON.stringify(result.user));
         window.location.replace('/user/dashboard');
       } else {
         if(result.status){
-          document.getElementById('signin-error').textContent = result.status;
+          if(result.status=="WRONG_CREDENTIALS_ERROR"){
+            document.getElementById('signin-error').textContent = "Invalid username or password"
+          } else if(result.status && result.status=="FIELD_ERROR"){
+            let errorMessage = "";
+            if(result.formFields){
+              result.formFields.forEach(function(formField){
+                // formField - {id: nameOfInput, error: errorTextForTheInput }
+                errorMessage += formField.error+" "
+              })
+            }
+            document.getElementById('signin-error').textContent = errorMessage || result.status;
+          }
         } else {
           document.getElementById('signin-error').textContent = "Some error occurred";
         }
       }
+    }
+
+    async function sendPasswordResetToken(){
+      let formFields = DOM.getFormFields("signin-form", { fields: ["email"] });
+      if(!formFields || formFields.length<1){
+        alert("Plese enter your email");
+        return null;
+      }
+      DOM.loader().show("Sending password reset link...");
+      supertokensEmailPassword.sendPasswordResetEmail({formFields: formFields})
+        .then(function(result){
+          if(result.status){
+            if(result.status=="OK"){
+              document.getElementById('signin-error').textContent = "Sent password reset link to your email."
+            } else if(result.status && result.status=="FIELD_ERROR"){
+              let errorMessage = "";
+              if(result.formFields){
+                result.formFields.forEach(function(formField){
+                  // formField - {id: nameOfInput, error: errorTextForTheInput }
+                  errorMessage += formField.error+" "
+                })
+              }
+              document.getElementById('signin-error').textContent = errorMessage || result.status;
+            }
+          } else {
+            document.getElementById('signin-error').textContent = "Some error occurred";
+          }
+        })
+        .finally(function(){
+          DOM.loader().hide();
+        })
     }
   </script>
 </html>

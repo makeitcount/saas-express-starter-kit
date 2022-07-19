@@ -49,6 +49,7 @@ app.use(
   })
 );
 app.use(middleware());
+// AUTH(SuperTokens) related middlewares end here
 
 // Logic for serving different routes is handled by categorized controllers
 var indexRouter = require("./routes/index");
