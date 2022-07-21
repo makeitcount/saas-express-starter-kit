@@ -12,8 +12,9 @@ I hope, this saves some time and helps you invest your time and energy in making
 
 - [x] Signup and signin
 - [x] Session management
+- [x] Reset password
 - [x] Email notifications
-- [ ] Reset password
+- [ ] Events and queues
 - [ ] Feature flagging
 - [x] Single file to configure features(e.g. API keys, settings)
 
