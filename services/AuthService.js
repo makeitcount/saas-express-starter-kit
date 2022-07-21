@@ -43,6 +43,9 @@ function init(){
             }
             ]
         },
+        emailVerificationFeature: {
+            mode: "REQUIRED"
+        },
         override: {
             apis: (originalImplementation) => {
             return {

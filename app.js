@@ -26,12 +26,8 @@ var {
 } = require("supertokens-node/framework/express");
 
 var AuthService = require("./services/AuthService.js");
+AuthService.init();
 
-AuthService.init()
-
-var indexRouter = require("./routes/index");
-var userRouter = require("./routes/user");
-var authRouter = require("./routes/auth");
 
 var app = express();
 
@@ -53,6 +49,12 @@ app.use(
   })
 );
 app.use(middleware());
+// AUTH(SuperTokens) related middlewares end here
+
+// Logic for serving different routes is handled by categorized controllers
+var indexRouter = require("./routes/index");
+var userRouter = require("./routes/user");
+var authRouter = require("./routes/auth");
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
