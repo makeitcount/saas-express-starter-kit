@@ -3,6 +3,7 @@ exports.init = init;
 exports.sendEmail = sendEmail;
 exports.alertAdmin = alertAdmin;
 exports.alertUser = alertUser;
+exports.sendEmailNow = sendEmailNow;
 
 // Library to send email
 const nodemailer = require("nodemailer");
@@ -20,6 +21,8 @@ const DEFAULT_CONTEXT_DATA_OBJECT = {
 };
 // Library to convert html email to plain-text email
 var htmlToText = require('nodemailer-html-to-text').htmlToText;
+
+var WorkerService = require('./WorkerService');
 
 var EmailTransporter;
 
@@ -86,7 +89,7 @@ init().catch(console.error);
 async function sendEmail(category, contextData, emailOptions){
   let finalEmailOptions = emailOptions || {};
   if(!finalEmailOptions.to){
-    console.warn("No email address to send email. Make sure to provide it in options.to param");
+    return console.warn("No email address to send email. Make sure to provide it in options.to param");
   }
   if(!finalEmailOptions.from){
     finalEmailOptions.from = process.env.DEFAULT_FROM_EMAIL;
@@ -101,10 +104,26 @@ async function sendEmail(category, contextData, emailOptions){
     finalEmailOptions.html = await consolidate[TEMPLATE_LANGUAGE](EMAIL_TEMPLATES[category], Object.assign(DEFAULT_CONTEXT_DATA_OBJECT, contextData));
   }
   if(!finalEmailOptions.html && !finalEmailOptions.text){
-    console.warn("No message to send email. Make sure to add message param under options.text or options.html");
+    return console.warn("No message to send email. Make sure to add message param under options.text or options.html");
   }
+  if(emailOptions.addToQueue) {
+    addEmailToQueue(finalEmailOptions);
+  } else {
+    sendEmailNow(finalEmailOptions);
+  }
+}
+
+/**
+ * This fn is not supposed to be used outside this file or WorkerJobs.js
+ * @param {Object} finalEmailOptions 
+ */
+async function sendEmailNow(finalEmailOptions){
   let info = await EmailTransporter.sendMail(finalEmailOptions)
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+}
+
+async function addEmailToQueue(finalEmailOptions){
+  WorkerService.add('email', 'send.now', finalEmailOptions)
 }
 
 /**

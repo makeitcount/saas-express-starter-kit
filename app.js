@@ -67,7 +67,8 @@ var listener = app.listen(8080, async function () {
   EmailService.sendEmail("admin.alert", null, {
     text: process.env.SITE_TITLE + " is up now",
     to: process.env.ADMIN_EMAIL, 
-    subject: process.env.SITE_TITLE + " is up now. Sending this email as you as you're the admin."
+    subject: process.env.SITE_TITLE + " is up now",
+    addToQueue: true
   })
   // You can send the same email to admin as above using following fn
   EmailService.alertAdmin(process.env.SITE_TITLE + " is up now. Sending this email as you as you're the admin.");
