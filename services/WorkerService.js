@@ -28,7 +28,9 @@ const defaultJobOptions = {
     delay: 20000
 }
 
+const DEFAULT_JOB_CONCURRENCY = process.env.DEFAULT_JOB_CONCURRENCY || 1;
 
+// List of processor fn for different queue workers
 const Queue_Processor_Map = {
     "email": {
         'send.now': WorkerJobs.sendEmail
@@ -64,7 +66,7 @@ function createQueue(name){
     Active_Queues[name || 'master_queue'] = q;
     return q;
 }
-
+ 
 /**
  * Sets a processor function for a named job in a queue
  * @param {String} queueName 
@@ -73,7 +75,10 @@ function createQueue(name){
  */
 function createWorker(queueName, jobName){
     let q = createQueue(queueName);
-    q.process(jobName, Queue_Processor_Map[queueName][jobName]);    
+    q.process(jobName, DEFAULT_JOB_CONCURRENCY, async function(job, done) { 
+        await Queue_Processor_Map[queueName][jobName](job.data);
+        done();
+    });    
     return q;
 }
 

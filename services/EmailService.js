@@ -118,6 +118,7 @@ async function sendEmail(category, contextData, emailOptions){
  * @param {Object} finalEmailOptions 
  */
 async function sendEmailNow(finalEmailOptions){
+  await init();
   let info = await EmailTransporter.sendMail(finalEmailOptions)
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
