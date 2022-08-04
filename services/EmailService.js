@@ -84,7 +84,12 @@ init().catch(console.error);
  * @param {String} category email category e.g. `admin.request.accountdeletion`. this helps in getting the right template and logic.
  * @param {Object} emailOptions { to, from, subject, text, addToQueue } addToQueue option adds email to the queue instead of sending email right away
  * @param {Object} contextData data required to fill the template
- * @example sendEmail()
+ * @example EmailService.sendEmail("admin.alert", {    
+ *     addToQueue: true
+ *     to: "john@doe.org"
+ *     subject: "The email subject",
+ *     text: "The email body",
+ *   })
  */
 async function sendEmail(category, emailOptions, contextData){
   let finalEmailOptions = emailOptions || {};
