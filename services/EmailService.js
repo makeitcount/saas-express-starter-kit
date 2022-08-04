@@ -82,11 +82,11 @@ init().catch(console.error);
 /**
  * Function to send emails
  * @param {String} category email category e.g. `admin.request.accountdeletion`. this helps in getting the right template and logic.
+ * @param {Object} emailOptions { to, from, subject, text, addToQueue } addToQueue option adds email to the queue instead of sending email right away
  * @param {Object} contextData data required to fill the template
- * @param {Object} emailOptions { to, from, subject, text }
  * @example sendEmail()
  */
-async function sendEmail(category, contextData, emailOptions){
+async function sendEmail(category, emailOptions, contextData){
   let finalEmailOptions = emailOptions || {};
   if(!finalEmailOptions.to){
     return console.warn("No email address to send email. Make sure to provide it in options.to param");
@@ -114,8 +114,9 @@ async function sendEmail(category, contextData, emailOptions){
 }
 
 /**
- * This fn is not supposed to be used outside this file or WorkerJobs.js
- * @param {Object} finalEmailOptions 
+ * This fn is not supposed to be used outside EmailService or WorkerJobs.js
+ * Sends email right away without any validation, assumes all the email options to be present
+ * @param {Object} finalEmailOptions { to, from, subject, text, html }
  */
 async function sendEmailNow(finalEmailOptions){
   await init();
@@ -132,10 +133,12 @@ async function addEmailToQueue(finalEmailOptions){
  * @param {*} message 
  */
 async function alertAdmin(message){
-  await sendEmail('admin.alert', { message: message }, {
+  await sendEmail('admin.alert', {
     text: message,
     subject: extractSubjectFromMessage(message),
     to: process.env.ADMIN_EMAIL
+  }, { 
+    message: message 
   });
 }
 
@@ -144,10 +147,12 @@ async function alertAdmin(message){
  * @param {*} message 
  */
 async function alertUser(email, message){
-  await sendEmail('user.alert', { message: message }, {
+  await sendEmail('user.alert', {
     text: message,
     subject: extractSubjectFromMessage(message),
     to: email
+  }, { 
+    message: message 
   });
 }
 

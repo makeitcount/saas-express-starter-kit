@@ -3,7 +3,6 @@
 */
 
 "use strict";
-exports.createWorker = createWorker;
 exports.add = add;
 
 // Library for queue/jobs system
