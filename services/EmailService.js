@@ -3,6 +3,7 @@ exports.init = init;
 exports.sendEmail = sendEmail;
 exports.alertAdmin = alertAdmin;
 exports.alertUser = alertUser;
+exports.sendEmailNow = sendEmailNow;
 
 // Library to send email
 const nodemailer = require("nodemailer");
@@ -20,6 +21,8 @@ const DEFAULT_CONTEXT_DATA_OBJECT = {
 };
 // Library to convert html email to plain-text email
 var htmlToText = require('nodemailer-html-to-text').htmlToText;
+
+var WorkerService = require('./WorkerService');
 
 var EmailTransporter;
 
@@ -79,14 +82,19 @@ init().catch(console.error);
 /**
  * Function to send emails
  * @param {String} category email category e.g. `admin.request.accountdeletion`. this helps in getting the right template and logic.
+ * @param {Object} emailOptions { to, from, subject, text, addToQueue } addToQueue option adds email to the queue instead of sending email right away
  * @param {Object} contextData data required to fill the template
- * @param {Object} emailOptions { to, from, subject, text }
- * @example sendEmail()
+ * @example EmailService.sendEmail("admin.alert", {    
+ *     addToQueue: true
+ *     to: "john@doe.org"
+ *     subject: "The email subject",
+ *     text: "The email body",
+ *   })
  */
-async function sendEmail(category, contextData, emailOptions){
+async function sendEmail(category, emailOptions, contextData){
   let finalEmailOptions = emailOptions || {};
   if(!finalEmailOptions.to){
-    console.warn("No email address to send email. Make sure to provide it in options.to param");
+    return console.warn("No email address to send email. Make sure to provide it in options.to param");
   }
   if(!finalEmailOptions.from){
     finalEmailOptions.from = process.env.DEFAULT_FROM_EMAIL;
@@ -101,10 +109,28 @@ async function sendEmail(category, contextData, emailOptions){
     finalEmailOptions.html = await consolidate[TEMPLATE_LANGUAGE](EMAIL_TEMPLATES[category], Object.assign(DEFAULT_CONTEXT_DATA_OBJECT, contextData));
   }
   if(!finalEmailOptions.html && !finalEmailOptions.text){
-    console.warn("No message to send email. Make sure to add message param under options.text or options.html");
+    return console.warn("No message to send email. Make sure to add message param under options.text or options.html");
   }
+  if(emailOptions.addToQueue) {
+    addEmailToQueue(finalEmailOptions);
+  } else {
+    sendEmailNow(finalEmailOptions);
+  }
+}
+
+/**
+ * This fn is not supposed to be used outside EmailService or WorkerJobs.js
+ * Sends email right away without any validation, assumes all the email options to be present
+ * @param {Object} finalEmailOptions { to, from, subject, text, html }
+ */
+async function sendEmailNow(finalEmailOptions){
+  await init();
   let info = await EmailTransporter.sendMail(finalEmailOptions)
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+}
+
+async function addEmailToQueue(finalEmailOptions){
+  WorkerService.addJob('email', 'send.now', finalEmailOptions)
 }
 
 /**
@@ -112,10 +138,12 @@ async function sendEmail(category, contextData, emailOptions){
  * @param {*} message 
  */
 async function alertAdmin(message){
-  await sendEmail('admin.alert', { message: message }, {
+  await sendEmail('admin.alert', {
     text: message,
     subject: extractSubjectFromMessage(message),
     to: process.env.ADMIN_EMAIL
+  }, { 
+    message: message 
   });
 }
 
@@ -124,10 +152,12 @@ async function alertAdmin(message){
  * @param {*} message 
  */
 async function alertUser(email, message){
-  await sendEmail('user.alert', { message: message }, {
+  await sendEmail('user.alert', {
     text: message,
     subject: extractSubjectFromMessage(message),
     to: email
+  }, { 
+    message: message 
   });
 }
 
