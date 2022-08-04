@@ -1,5 +1,8 @@
 /**
  * @file Service for jobs and queues
+ * This file maintains only the queue and the process to add a job.
+ * It does not define the job function. 
+ * Define a new job function in WorkerJobs and map it to JOB_PROCESSOR_MAP in this file.
 */
 
 "use strict";
@@ -10,13 +13,14 @@ exports.add = add;
 // Reference: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md
 const Queue = require("bull");
 
+// Define your job functions in WorkerJobs.js
 const WorkerJobs = require('./WorkerJobs');
 
 // Redis configurations, it will be required by bull package as storage for queues
 const REDIS_CONFIG = {
     port: process.env.REDIS_PORT || 6379,
-    host: process.env.REDIS_PORT || 'localhost',
-    password: process.env.REDIS_PORT || ""
+    host: process.env.REDIS_HOST || 'localhost',
+    password: process.env.REDIS_PASSWORD || ""
 }
 
 const defaultJobOptions = {
@@ -29,8 +33,8 @@ const defaultJobOptions = {
 
 const DEFAULT_JOB_CONCURRENCY = process.env.DEFAULT_JOB_CONCURRENCY || 1;
 
-// List of processor fn for different queue workers
-const Queue_Processor_Map = {
+// List of processor fn for different queue workers { queueName: { jobName: jobProcessorFn }}
+const JOB_PROCESSOR_MAP = {
     "email": {
         'send.now': WorkerJobs.sendEmail
     }
@@ -43,9 +47,12 @@ var Active_Queues = {
 
 init()
 
+/**
+ * Start all the queues and jobs mapped in JOB_PROCESSOR_MAP
+ */
 function init(){
-    for(let q in Queue_Processor_Map){
-        for(let job in Queue_Processor_Map[q]){
+    for(let q in JOB_PROCESSOR_MAP){
+        for(let job in JOB_PROCESSOR_MAP[q]){
             createWorker(q, job)
         }
     }
@@ -75,7 +82,7 @@ function createQueue(name){
 function createWorker(queueName, jobName){
     let q = createQueue(queueName);
     q.process(jobName, DEFAULT_JOB_CONCURRENCY, async function(job, done) { 
-        await Queue_Processor_Map[queueName][jobName](job.data);
+        await JOB_PROCESSOR_MAP[queueName][jobName](job.data);
         done();
     });    
     return q;
