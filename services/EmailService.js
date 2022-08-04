@@ -130,7 +130,7 @@ async function sendEmailNow(finalEmailOptions){
 }
 
 async function addEmailToQueue(finalEmailOptions){
-  WorkerService.add('email', 'send.now', finalEmailOptions)
+  WorkerService.addJob('email', 'send.now', finalEmailOptions)
 }
 
 /**

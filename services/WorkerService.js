@@ -6,7 +6,8 @@
 */
 
 "use strict";
-exports.add = add;
+exports.addJob = addJob;
+exports.addCronJob = addCronJob;
 
 // Library for queue/jobs system
 // Source: https://github.com/OptimalBits/bull
@@ -89,13 +90,37 @@ function createWorker(queueName, jobName){
 }
 
 /**
- * Adds a new job to a queue.
+ * Adds a new job to a queue
  * @param {String} queueName 
  * @param {String} jobName 
- * @param {Objet} data 
- * @param {Object} jobOptions 
+ * @param {Objet} data any data/context required by the job processor
+ * @param {Object} jobOptions - available jobOpts https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueadd
+ * @example WorkerService.addJob('email', 'send.now', finalEmailOptions)
  */
-function add(queueName, jobName, data, jobOptions){
+function addJob(queueName, jobName, data, jobOptions){
     let q = createQueue(queueName);
     return q.add(jobName, data, jobOptions || defaultJobOptions)
+}
+
+/**
+ * Add job that will be repeated as per the defined cron schedule
+ * @param {String} queueName 
+ * @param {String} jobName 
+ * @param {String} cronString - a valid cron string. More info on how to write cron string https://crontab.guru/
+ * @param {Objet} data 
+ * @param {Object} jobOptions - available jobOpts https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueadd
+ * @example WorkerService.addCronJob('email', 'news.weekly', '0 13 * * 6', newsletterOpts,) 
+ */
+function addCronJob(queueName, jobName, cronString, data, jobOptions){
+    if(!cronString && !jobOptions.repeat && jobOptions.repeat.cron){
+        console.error("Not a cron job")
+        return null
+    }
+    if(cronString){
+        if(!jobOptions) jobOptions = defaultJobOptions;
+        if(!jobOptions.repeat) jobOptions.repeat = {}
+        jobOptions.repeat.cron = cronString
+    }
+    let q = createQueue(queueName);
+    return q.add(jobName, data, jobOptions)
 }
