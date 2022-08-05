@@ -13,8 +13,9 @@ I hope, this saves some time and helps you invest your time and energy in making
 - [x] Signup and signin
 - [x] Session management
 - [x] Reset password
-- [x] Email notifications
-- [ ] Events and queues
+- [x] Email notifications `EmailService.sendEmail()`
+- [x] Queues and jobs `WorkerService.addJob`
+- [x] Cron jobs `WorkerService.addCronJob`
 - [ ] Feature flagging
 - [x] Single file to configure features(e.g. API keys, settings)
 
