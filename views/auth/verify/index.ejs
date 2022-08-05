@@ -1,0 +1,10 @@
+<h1>Signing in...</h1>
+Wait for a moment
+
+<%- include('../../partials/footer.ejs') %>
+<script>
+    loginWithMagicLink()
+    function loginWithMagicLink(){
+        supertokensPasswordless.consumeCode().then((res) => { if(res.createdUser){ console.log(JSON.stringify(res.user))} })
+    }
+</script>

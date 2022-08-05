@@ -25,6 +25,9 @@ supertokens.init({
   },
     recipeList: [
         supertokensSession.init(),
+        supertokensPasswordless.init({
+          contactMethod: "EMAIL_OR_PHONE"
+        }),
         supertokensEmailPassword.init({
           emailVerificationFeature: {
             mode: "REQUIRED"
@@ -53,7 +56,7 @@ if (location.hash && location.hash == "#try_refresh_token") {
 }
 
 async function doRefresh() {
-  DOM.Loader.show("Refreshing access token...");
+  DOM.loader().show("Refreshing access token...");
   console.log("Going to refresh token now");
   if (await supertokensSession.attemptRefreshingSession()) {
     // post session refreshing, we reload the page. This will
@@ -68,13 +71,13 @@ async function doRefresh() {
         return window.location.replace(redirectPage);
       }
     }
-    DOM.Loader.hide();
+    DOM.loader().hide();
     location.hash = "";
     location.reload();
   } else {
     // the user's session has expired. So we redirect
     // them to the login page
-    DOM.Loader.hide();
+    DOM.loader().hide();
     window.location.replace("/auth?redirectToPath=" + location.pathname);
   }
 }

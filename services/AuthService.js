@@ -5,6 +5,7 @@ exports.updateUserMetaData = updateUserMetaData;
 const supertokens = require("supertokens-node");
 var Session = require("supertokens-node/recipe/session");
 var EmailPassword = require("supertokens-node/recipe/emailpassword");
+var Passwordless = require("supertokens-node/recipe/passwordless");
 var UserMetadata = require("supertokens-node/recipe/usermetadata");
 
 function init(){
@@ -24,6 +25,10 @@ function init(){
         websiteBasePath: "/auth"
     },
     recipeList: [
+        Passwordless.init({
+            flowType: "MAGIC_LINK",
+            contactMethod: "EMAIL_OR_PHONE"
+        }),
         EmailPassword.init({
         signUpFeature: {
             formFields: [

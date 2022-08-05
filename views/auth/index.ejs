@@ -14,7 +14,7 @@
       <input name="email" type="text" placeholder="Your Email" autocomplete="email" required><br />
       <br/>
       <label>Password</label><br/>
-      <input name="password" type="password" minlength="8" placeholder="Password" autocomplete="current-password" required><br />
+      <input name="password" type="password" minlength="8" placeholder="Password" autocomplete="current-password"><br />
       <br/>
       <input type="submit" value="Sign In" />
       <br/><br/>
@@ -93,6 +93,12 @@
         return false;
       }
       DOM.loader().show("Signing in...");
+      console.debug(JSON.stringify(formFields))
+      if(formFields.length==1 && formFields[0].id == "email"){
+        console.debug("Signing in with passwordless");
+        return passwordlessLogin(formFields[0].value);
+      }
+      console.debug("Signing in with email/password");
       const response = await fetch(
         "<%= process.env.SITE_DOMAIN_URL %>/api/signin",
         {
@@ -159,6 +165,18 @@
         .finally(function(){
           DOM.loader().hide();
         })
+    }
+
+    async function passwordlessLogin(email){
+      let response = await supertokensPasswordless.createCode({ email: email });
+      if(response.status == "OK"){
+        // Show the box to enter code
+        const userInputCode = window.prompt("Enter the code received on your email");
+        let verificationResponse = await supertokensPasswordless.consumeCode({ userInputCode: userInputCode });
+        if(res.createdUser){ 
+          console.log(JSON.stringify(res.user));
+        }
+      }
     }
   </script>
 </html>

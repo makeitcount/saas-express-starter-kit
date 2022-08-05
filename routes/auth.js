@@ -23,4 +23,8 @@ router.get("/reset-password", async function (req, res) {
   res.render("auth/reset-password", { title: "Signup or signin |" + process.env.SITE_TITLE });
 });
 
+router.get("/verify", async function (req, res) {
+  res.render("auth/verify", { title: "Signing in to " + process.env.SITE_TITLE });
+});
+
 module.exports = router;
