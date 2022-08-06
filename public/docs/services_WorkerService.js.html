@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/WorkerService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/WorkerService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Service for jobs and queues
+ * This file maintains only the queue and the process to add a job.
+ * It does not define the job function. 
+ * Define a new job function in WorkerJobs and map it to JOB_PROCESSOR_MAP in this file.
+*/
+
+"use strict";
+exports.addJob = addJob;
+exports.addCronJob = addCronJob;
+
+// Library for queue/jobs system
+// Source: https://github.com/OptimalBits/bull
+// Reference: https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md
+const Queue = require("bull");
+
+// Define your job functions in WorkerJobs.js
+const WorkerJobs = require('./WorkerJobs');
+
+// Redis configurations, it will be required by bull package as storage for queues
+const REDIS_CONFIG = {
+    port: process.env.REDIS_PORT || 6379,
+    host: process.env.REDIS_HOST || 'localhost',
+    password: process.env.REDIS_PASSWORD || ""
+}
+
+const defaultJobOptions = {
+    attempts: 1,
+    removeOnComplete: 100,
+    removeOnFail: 100,
+    stackTraceLimit: 10,
+    delay: 20000
+}
+
+const DEFAULT_JOB_CONCURRENCY = process.env.DEFAULT_JOB_CONCURRENCY || 1;
+
+// List of processor fn for different queue workers { queueName: { jobName: jobProcessorFn }}
+const JOB_PROCESSOR_MAP = {
+    "email": {
+        'send.now': WorkerJobs.sendEmail
+    }
+}
+
+// Stores active queues objects
+var Active_Queues = {
+    "email": null
+};
+
+init()
+
+/**
+ * Start all the queues and jobs mapped in JOB_PROCESSOR_MAP
+ */
+function init(){
+    for(let q in JOB_PROCESSOR_MAP){
+        for(let job in JOB_PROCESSOR_MAP[q]){
+            createWorker(q, job)
+        }
+    }
+}
+
+/**
+ * Creates a queue
+ * @param {String} name of the queue
+ */
+function createQueue(name){
+    if(name &amp;&amp; Active_Queues[name]){
+        return Active_Queues[name];
+    }
+    let q = new Queue(name || 'master_queue', {
+            redis: REDIS_CONFIG
+        })
+    Active_Queues[name || 'master_queue'] = q;
+    return q;
+}
+ 
+/**
+ * Sets a processor function for a named job in a queue
+ * @param {String} queueName 
+ * @param {String} jobName 
+ * @param {Function} workFn 
+ */
+function createWorker(queueName, jobName){
+    let q = createQueue(queueName);
+    q.process(jobName, DEFAULT_JOB_CONCURRENCY, async function(job, done) { 
+        await JOB_PROCESSOR_MAP[queueName][jobName](job.data);
+        done();
+    });    
+    return q;
+}
+
+/**
+ * Adds a new job to a queue
+ * @param {String} queueName 
+ * @param {String} jobName 
+ * @param {Objet} data any data/context required by the job processor
+ * @param {Object} jobOptions - available jobOpts https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueadd
+ * @example WorkerService.addJob('email', 'send.now', finalEmailOptions)
+ */
+function addJob(queueName, jobName, data, jobOptions){
+    let q = createQueue(queueName);
+    return q.add(jobName, data, jobOptions || defaultJobOptions)
+}
+
+/**
+ * Add job that will be repeated as per the defined cron schedule
+ * @param {String} queueName 
+ * @param {String} jobName 
+ * @param {String} cronString - a valid cron string. More info on how to write cron string https://crontab.guru/
+ * @param {Objet} data 
+ * @param {Object} jobOptions - available jobOpts https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queueadd
+ * @example WorkerService.addCronJob('email', 'news.weekly', '0 13 * * 6', newsletterOpts,) 
+ */
+function addCronJob(queueName, jobName, cronString, data, jobOptions){
+    if(!cronString &amp;&amp; !jobOptions.repeat &amp;&amp; jobOptions.repeat.cron){
+        console.error("Not a cron job")
+        return null
+    }
+    if(cronString){
+        if(!jobOptions) jobOptions = defaultJobOptions;
+        if(!jobOptions.repeat) jobOptions.repeat = {}
+        jobOptions.repeat.cron = cronString
+    }
+    let q = createQueue(queueName);
+    return q.add(jobName, data, jobOptions)
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCronJob">addCronJob</a></li><li><a href="global.html#addJob">addJob</a></li><li><a href="global.html#alertAdmin">alertAdmin</a></li><li><a href="global.html#alertUser">alertUser</a></li><li><a href="global.html#createQueue">createQueue</a></li><li><a href="global.html#createWorker">createWorker</a></li><li><a href="global.html#DOM">DOM</a></li><li><a href="global.html#extractSubjectFromMessage">extractSubjectFromMessage</a></li><li><a href="global.html#getSessionInfo">getSessionInfo</a></li><li><a href="global.html#hide">hide</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#sendEmail">sendEmail</a></li><li><a href="global.html#sendEmailNow">sendEmailNow</a></li><li><a href="global.html#show">show</a></li><li><a href="global.html#storeUserMetaDataInTokenPayload">storeUserMetaDataInTokenPayload</a></li><li><a href="global.html#updateUserMetaData">updateUserMetaData</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sat Aug 06 2022 13:05:59 GMT+0100 (West Africa Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
